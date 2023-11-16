@@ -7,6 +7,7 @@ import Button, { BUTTON_TYPES } from "../../components/Button";
 const mockContactApi = () => new Promise((resolve) => { setTimeout(resolve, 1000); })
 
 const Form = ({ onSuccess, onError }) => {
+  // True quand c'est envoyé
   const [sending, setSending] = useState(false);
   const sendContact = useCallback(
     async (evt) => {
@@ -16,6 +17,8 @@ const Form = ({ onSuccess, onError }) => {
       try {
         await mockContactApi();
         setSending(false);
+        onSuccess();
+
       } catch (err) {
         setSending(false);
         onError(err);
@@ -23,7 +26,10 @@ const Form = ({ onSuccess, onError }) => {
     },
     [onSuccess, onError]
   );
+
+
   return (
+    
     <form onSubmit={sendContact}>
       <div className="row">
         <div className="col">
@@ -38,6 +44,7 @@ const Form = ({ onSuccess, onError }) => {
           />
           <Field placeholder="" label="Email" />
           <Button type={BUTTON_TYPES.SUBMIT} disabled={sending}>
+            {/* Si sending est true alors on affiche "En cours" sinon on affiche "Envoyer" */}
             {sending ? "En cours" : "Envoyer"}
           </Button>
         </div>

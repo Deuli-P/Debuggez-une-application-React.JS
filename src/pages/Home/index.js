@@ -1,3 +1,5 @@
+// Note: Home page
+import React, { useState, useEffect } from "react";
 import Menu from "../../containers/Menu";
 import ServiceCard from "../../components/ServiceCard";
 import EventCard from "../../components/EventCard";
@@ -13,7 +15,26 @@ import Modal from "../../containers/Modal";
 import { useData } from "../../contexts/DataContext";
 
 const Page = () => {
-  const {last} = useData()
+  const {data, error} = useData()
+  const [loading, setLoading] = useState(true);
+  const [lastElement, setLastElement] = useState({});
+
+  const filteredLastElement =()=> {
+    const array = data.events.slice(-1);
+    setLastElement(array[0]);
+  }
+
+  useEffect(() => {
+    if(data) {
+      setLoading(false)
+      filteredLastElement();
+    }
+    else if(error) {
+      setLoading(true)
+    }
+  },[data])
+
+
   return <>
     <header>
       <Menu />
@@ -22,7 +43,7 @@ const Page = () => {
       <section className="SliderContainer">
         <Slider />
       </section>
-      <section className="ServicesContainer">
+      <section className="ServicesContainer" id="nos-services">
         <h2 className="Title">Nos services</h2>
         <p>Nous organisons des événements sur mesure partout dans le monde</p>
         <div className="ListContainer">
@@ -51,11 +72,11 @@ const Page = () => {
           </ServiceCard>
         </div>
       </section>
-      <section className="EventsContainer">
+      <section className="EventsContainer" id="nos-realisations">
         <h2 className="Title">Nos réalisations</h2>
         <EventList />
       </section>
-      <section className="PeoplesContainer">
+      <section id="nos-equipes" className="PeoplesContainer">
         <h2 className="Title">Notre équipe</h2>
         <p>Une équipe d’experts dédiés à l’ogranisation de vos événements</p>
         <div className="ListContainer">
@@ -116,13 +137,14 @@ const Page = () => {
     <footer className="row">
       <div className="col presta">
         <h3>Notre derniére prestation</h3>
+        {loading ? ("Chargement...") : (
         <EventCard
-          imageSrc={last?.cover}
-          title={last?.title}
-          date={new Date(last?.date)}
+          imageSrc={ lastElement.cover}
+          title={ lastElement.title}
+          date={new Date(lastElement.date)}
           small
           label="boom"
-        />
+        />)}
       </div>
       <div className="col contact">
         <h3>Contactez-nous</h3>
